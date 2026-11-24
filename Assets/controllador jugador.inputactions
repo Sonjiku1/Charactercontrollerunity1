@@ -43,7 +43,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Change View",
+                    "name": "ChangeView",
                     "type": "Button",
                     "id": "0a497ebe-a6ca-409b-97cf-d63d3c8215cd",
                     "expectedControlType": "",
@@ -148,7 +148,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Change View",
+                    "action": "ChangeView",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
