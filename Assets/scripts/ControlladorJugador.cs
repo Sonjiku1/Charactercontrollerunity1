@@ -15,10 +15,17 @@ public class ControladorJugador : MonoBehaviour
     [SerializeField] private float velocidad = 5f;
     [SerializeField] private float alturaSalto = 1.5f;
     [SerializeField] private float gravedad = -20f;
+    [SerializeField] private float SensibilidadMouse = 1f;
 
+    [Header("Cámara")]
+    [SerializeField] private Vector3 posicionTercera = new Vector3(0.65f, 0.15f, -3f);
+    [SerializeField] private Vector3 posicionApuntado = new Vector3(0.55f, 0.1f, -1.7f);
+    [SerializeField] private float suavizado = 10f;
     private float velocidadVertical;
 
     private float inclinacion = 0f;
+
+    private bool primeraPersona = false;
 
     //Componentes que vamos a manipular
     private CharacterController controlador;
@@ -28,6 +35,7 @@ public class ControladorJugador : MonoBehaviour
     private InputAction mirar;
     private InputAction apuntar;
     private InputAction cambiarVista;
+   
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -52,6 +60,12 @@ public class ControladorJugador : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (cambiarVista.WasPressedThisFrame())
+        {
+            primeraPersona = !primeraPersona;
+            modelo.SetActive(!primeraPersona);
+        }
+
         GirarCamara();
         MoverPersonaje();
         ActualizarCamara();
@@ -63,7 +77,7 @@ public class ControladorJugador : MonoBehaviour
         Vector2 deltaMouse = mirar.ReadValue<Vector2>();
 
         //2. Rotamos le gameobject (jugador) en el eje Y
-        transform.Rotate(Vector3.up * deltaMouse.x);
+        transform.Rotate(Vector3.up * deltaMouse.x * SensibilidadMouse);
 
         //3. Obtenemos la inclinación de la cámara según el desplazamiento del ratón en Y
         inclinacion -= deltaMouse.y;
@@ -106,6 +120,30 @@ public class ControladorJugador : MonoBehaviour
 
     void ActualizarCamara()
     {
-        //TODO
+        //1. Destino de la cámara
+        Vector3 destino;
+
+        if (primeraPersona)
+        {
+            destino = Vector3.zero;
+        }
+        else
+        {
+            destino = posicionTercera;
+        }
+
+        camara.transform.localPosition = Vector3.Lerp(camara.transform.localPosition, destino, suavizado  * Time.deltaTime);
+
+    }
+
+
+    // Método que si toca al enemigo paco  que paco se elimine
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.gameObject.CompareTag("paco"))
+        {
+            Destroy(hit.gameObject);
+        }
     }
 }
